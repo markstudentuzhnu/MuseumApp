@@ -23,6 +23,17 @@ namespace Museum
             "int", "string", "string", "int", "string", "decimal", "string", "bool"
         };
 
+        static string[] sectionNames =
+        {
+            "Живопис", "Скульптура", "Кераміка", "Графіка", "Нумізматика", "Тканини"
+        };
+
+        static int[] sectionBase = { 60, 40, 30, 25, 20, 35 };
+
+        static string[] dayNames = { "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд" };
+
+        static double[] dayFactor = { 0.8, 0.8, 0.9, 1.0, 1.2, 1.6, 1.5 };
+
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -45,7 +56,7 @@ namespace Museum
                         Pause();
                         break;
                     case "3":
-                        Console.WriteLine("Поки не зроблено.");
+                        ShowVisitorsTable();
                         Pause();
                         break;
                     case "0":
@@ -100,6 +111,59 @@ namespace Museum
                 double work = 400 * Math.Sqrt(area);
                 Console.WriteLine($"{area,10:F2}{materials,16:F2}{work,14:F2}");
             }
+        }
+
+        static void ShowVisitorsTable()
+        {
+            Console.Write("Скільки розділів показати (1–" + sectionNames.Length + "): ");
+            int rows;
+            if (!int.TryParse(Console.ReadLine(), out rows) || rows < 1 || rows > sectionNames.Length)
+            {
+                Console.WriteLine("Помилка: потрібне ціле число від 1 до " + sectionNames.Length + ".");
+                return;
+            }
+
+            Console.Write("Скільки днів показати (1–" + dayNames.Length + "): ");
+            int cols;
+            if (!int.TryParse(Console.ReadLine(), out cols) || cols < 1 || cols > dayNames.Length)
+            {
+                Console.WriteLine("Помилка: потрібне ціле число від 1 до " + dayNames.Length + ".");
+                return;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Кількість відвідувачів розділів за днями тижня");
+            Console.Write("Розділ".PadRight(14));
+            for (int c = 0; c < cols; c++)
+            {
+                Console.Write($"{dayNames[c],8}");
+            }
+            Console.WriteLine("Разом".PadLeft(8));
+
+            int[] colSums = new int[cols];
+            int grand = 0;
+
+            for (int r = 0; r < rows; r++)
+            {
+                Console.Write(sectionNames[r].PadRight(14));
+                int rowSum = 0;
+                for (int c = 0; c < cols; c++)
+                {
+                    int visitors = (int)Math.Round(sectionBase[r] * dayFactor[c], MidpointRounding.AwayFromZero);
+                    Console.Write($"{visitors,8}");
+                    rowSum += visitors;
+                    colSums[c] += visitors;
+                }
+                Console.WriteLine($"{rowSum,8}");
+                grand += rowSum;
+            }
+
+            Console.Write("Разом".PadRight(14));
+            for (int c = 0; c < cols; c++)
+            {
+                Console.Write($"{colSums[c],8}");
+            }
+            Console.WriteLine($"{grand,8}");
         }
     }
 }
