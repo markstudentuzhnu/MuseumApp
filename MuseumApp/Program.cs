@@ -6,6 +6,10 @@ namespace Museum
     internal class Program
     {
         const int Capacity = 100;
+        const double AreaStart = 0.5;
+        const double AreaEnd = 5.0;
+        const double AreaStep = 0.5;
+
         static int count = 0;
 
         static string[] fieldNames =
@@ -37,7 +41,7 @@ namespace Museum
                         Pause();
                         break;
                     case "2":
-                        Console.WriteLine("Поки не зроблено.");
+                        ShowCostTable();
                         Pause();
                         break;
                     case "3":
@@ -82,6 +86,20 @@ namespace Museum
                 Console.WriteLine($"  {i + 1}. {fieldNames[i]} — {fieldTypes[i]}");
             }
             Console.WriteLine($"Місткість сховища: {Capacity} записів, зайнято: {count}.");
+        }
+
+        static void ShowCostTable()
+        {
+            Console.WriteLine("Вартість реставрації залежно від площі пошкодження");
+            Console.WriteLine("Площа, м²".PadLeft(10) + "Матеріали, грн".PadLeft(16) + "Робота, грн".PadLeft(14));
+            Console.WriteLine(new string('-', 40));
+
+            for (double area = AreaStart; area <= AreaEnd + 1e-9; area += AreaStep)
+            {
+                double materials = 140 * area;
+                double work = 400 * Math.Sqrt(area);
+                Console.WriteLine($"{area,10:F2}{materials,16:F2}{work,14:F2}");
+            }
         }
     }
 }
