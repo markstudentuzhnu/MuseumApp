@@ -156,6 +156,36 @@ namespace Museum
             }
 
             Console.WriteLine();
+            PrintVisitorsTable(rows, cols);
+        }
+
+        static int CalculateVisitors(int section, int day)
+        {
+            return (int)Math.Round(sectionBase[section] * dayFactor[day], MidpointRounding.AwayFromZero);
+        }
+
+        static int SumSectionVisitors(int section, int cols)
+        {
+            int sum = 0;
+            for (int c = 0; c < cols; c++)
+            {
+                sum += CalculateVisitors(section, c);
+            }
+            return sum;
+        }
+
+        static int SumDayVisitors(int day, int rows)
+        {
+            int sum = 0;
+            for (int r = 0; r < rows; r++)
+            {
+                sum += CalculateVisitors(r, day);
+            }
+            return sum;
+        }
+
+        static void PrintVisitorsTable(int rows, int cols)
+        {
             Console.WriteLine("Кількість відвідувачів розділів за днями тижня");
             Console.Write("Розділ".PadRight(14));
             for (int c = 0; c < cols; c++)
@@ -164,20 +194,15 @@ namespace Museum
             }
             Console.WriteLine("Разом".PadLeft(8));
 
-            int[] colSums = new int[cols];
             int grand = 0;
-
             for (int r = 0; r < rows; r++)
             {
                 Console.Write(sectionNames[r].PadRight(14));
-                int rowSum = 0;
                 for (int c = 0; c < cols; c++)
                 {
-                    int visitors = (int)Math.Round(sectionBase[r] * dayFactor[c], MidpointRounding.AwayFromZero);
-                    Console.Write($"{visitors,8}");
-                    rowSum += visitors;
-                    colSums[c] += visitors;
+                    Console.Write($"{CalculateVisitors(r, c),8}");
                 }
+                int rowSum = SumSectionVisitors(r, cols);
                 Console.WriteLine($"{rowSum,8}");
                 grand += rowSum;
             }
@@ -185,7 +210,7 @@ namespace Museum
             Console.Write("Разом".PadRight(14));
             for (int c = 0; c < cols; c++)
             {
-                Console.Write($"{colSums[c],8}");
+                Console.Write($"{SumDayVisitors(c, rows),8}");
             }
             Console.WriteLine($"{grand,8}");
         }
