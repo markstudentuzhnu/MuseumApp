@@ -60,6 +60,7 @@ namespace Museum
                         break;
                     case "5": PrintValues(values, count); Pause(); break;
                     case "6": ShowStatistics(values, count); Pause(); break;
+                    case "7": ShowPassingDemo(); Pause(); break;
                     case "0": running = false; ShowGoodbye(); break;
                     default: ShowUnknownChoice(); Pause(); break;
                 }
@@ -75,6 +76,7 @@ namespace Museum
             Console.WriteLine("4 — додати оцінну вартість експоната");
             Console.WriteLine("5 — показати вартості");
             Console.WriteLine("6 — статистика вартостей");
+            Console.WriteLine("7 — дослід: значиме й посилальне");
             Console.WriteLine("0 — вихід");
             Console.Write("Ваш вибір: ");
         }
@@ -345,6 +347,55 @@ namespace Museum
             Console.WriteLine($"Сума: {sum:F2} грн");
             Console.WriteLine($"Середня: {average:F2} грн");
             Console.WriteLine($"Найбільша: {max:F2} грн (номер {maxIndex + 1})");
+        }
+
+        static void IncreaseValue(int value)
+        {
+            value = value + 100;
+            Console.WriteLine($"  усередині методу: value = {value}");
+        }
+
+        static void IncreaseValueRef(ref int value)
+        {
+            value = value + 100;
+            Console.WriteLine($"  усередині методу: value = {value}");
+        }
+
+        static void IncreaseElement(int[] prices)
+        {
+            prices[0] = prices[0] + 100;
+            Console.WriteLine($"  усередині методу: prices[0] = {prices[0]}");
+        }
+
+        static void ReplaceArray(int[] prices)
+        {
+            prices = new int[] { 1, 2, 3 };
+            Console.WriteLine($"  усередині методу: prices[0] = {prices[0]}");
+        }
+
+        static void ShowPassingDemo()
+        {
+            int price = 50;
+            int[] prices = { 50, 70, 90 };
+
+            Console.WriteLine($"До: price = {price}, prices[0] = {prices[0]}");
+            Console.WriteLine();
+
+            Console.WriteLine("1. IncreaseValue(price) — значиме без ref:");
+            IncreaseValue(price);
+            Console.WriteLine($"  у Main: price = {price}");
+
+            Console.WriteLine("2. IncreaseElement(prices) — елемент масиву:");
+            IncreaseElement(prices);
+            Console.WriteLine($"  у Main: prices[0] = {prices[0]}");
+
+            Console.WriteLine("3. ReplaceArray(prices) — підміна масиву цілком:");
+            ReplaceArray(prices);
+            Console.WriteLine($"  у Main: prices[0] = {prices[0]}, довжина {prices.Length}");
+
+            Console.WriteLine("4. IncreaseValueRef(ref price) — значиме з ref:");
+            IncreaseValueRef(ref price);
+            Console.WriteLine($"  у Main: price = {price}");
         }
     }
 }
