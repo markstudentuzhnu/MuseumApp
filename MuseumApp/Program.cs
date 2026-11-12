@@ -59,6 +59,7 @@ namespace Museum
                         Pause();
                         break;
                     case "5": PrintValues(values, count); Pause(); break;
+                    case "6": ShowStatistics(values, count); Pause(); break;
                     case "0": running = false; ShowGoodbye(); break;
                     default: ShowUnknownChoice(); Pause(); break;
                 }
@@ -73,6 +74,7 @@ namespace Museum
             Console.WriteLine("3 — відвідуваність розділів за тиждень");
             Console.WriteLine("4 — додати оцінну вартість експоната");
             Console.WriteLine("5 — показати вартості");
+            Console.WriteLine("6 — статистика вартостей");
             Console.WriteLine("0 — вихід");
             Console.Write("Ваш вибір: ");
         }
@@ -291,6 +293,58 @@ namespace Museum
             {
                 Console.WriteLine($"{i + 1,4}{values[i],24:F2}");
             }
+        }
+
+        static void FindMax(double[] values, int count, out double max, out int index)
+        {
+            max = 0;
+            index = -1;
+            if (count == 0)
+            {
+                return;
+            }
+
+            max = values[0];
+            index = 0;
+            for (int i = 1; i < count; i++)
+            {
+                if (values[i] > max)
+                {
+                    max = values[i];
+                    index = i;
+                }
+            }
+        }
+
+        static void Statistics(double[] values, int count, out double sum, out double average)
+        {
+            sum = 0;
+            for (int i = 0; i < count; i++)
+            {
+                sum += values[i];
+            }
+            average = count > 0 ? sum / count : 0;
+        }
+
+        static void ShowStatistics(double[] values, int count)
+        {
+            if (count == 0)
+            {
+                Console.WriteLine("Статистика недоступна: список порожній.");
+                return;
+            }
+
+            double sum;
+            double average;
+            double max;
+            int maxIndex;
+            Statistics(values, count, out sum, out average);
+            FindMax(values, count, out max, out maxIndex);
+
+            Console.WriteLine($"Записів: {count}");
+            Console.WriteLine($"Сума: {sum:F2} грн");
+            Console.WriteLine($"Середня: {average:F2} грн");
+            Console.WriteLine($"Найбільша: {max:F2} грн (номер {maxIndex + 1})");
         }
     }
 }
