@@ -61,6 +61,11 @@ namespace Museum
                     case "5": PrintValues(values, count); Pause(); break;
                     case "6": ShowStatistics(values, count); Pause(); break;
                     case "7": ShowPassingDemo(); Pause(); break;
+                    case "8":
+                        int number = ReadInt("Номер запису для видалення: ", 1, Capacity);
+                        RemoveAt(values, ref count, number - 1);
+                        Pause();
+                        break;
                     case "0": running = false; ShowGoodbye(); break;
                     default: ShowUnknownChoice(); Pause(); break;
                 }
@@ -77,6 +82,7 @@ namespace Museum
             Console.WriteLine("5 — показати вартості");
             Console.WriteLine("6 — статистика вартостей");
             Console.WriteLine("7 — дослід: значиме й посилальне");
+            Console.WriteLine("8 — видалити запис за номером");
             Console.WriteLine("0 — вихід");
             Console.Write("Ваш вибір: ");
         }
@@ -396,6 +402,23 @@ namespace Museum
             Console.WriteLine("4. IncreaseValueRef(ref price) — значиме з ref:");
             IncreaseValueRef(ref price);
             Console.WriteLine($"  у Main: price = {price}");
+        }
+
+        static void RemoveAt(double[] values, ref int count, int index)
+        {
+            if (index < 0 || index >= count)
+            {
+                Console.WriteLine($"Запису з номером {index + 1} немає. Записів: {count}.");
+                return;
+            }
+
+            for (int i = index; i < count - 1; i++)
+            {
+                values[i] = values[i + 1];
+            }
+            count--;
+            values[count] = 0;
+            Console.WriteLine("Запис видалено.");
         }
     }
 }
