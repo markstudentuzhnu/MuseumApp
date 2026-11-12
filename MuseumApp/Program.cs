@@ -7,10 +7,10 @@ namespace Museum
     internal class Program
     {
         const int Capacity = 100;
+        const double MaxValue = 1000000000.0;
+        const string ValuePrompt = "Оцінна вартість, грн (0–1000000000): ";
         const double MaterialRate = 140.0;
         const double WorkRate = 400.0;
-
-        static int count = 0;
 
         static string[] fieldNames =
         {
@@ -37,6 +37,8 @@ namespace Museum
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
+            double[] values = new double[Capacity];
+            int count = 0;
             bool running = true;
 
             while (running)
@@ -47,9 +49,16 @@ namespace Museum
 
                 switch (choice)
                 {
-                    case "1": ShowAbout(); Pause(); break;
+                    case "1": ShowAbout(count, Capacity); Pause(); break;
                     case "2": ShowCostTable(); Pause(); break;
                     case "3": ShowVisitorsTable(); Pause(); break;
+                    case "4":
+                        double newValue = ReadDouble(ValuePrompt, 0, MaxValue);
+                        AddValue(values, ref count, newValue, Capacity);
+                        Console.WriteLine($"Лічильник у Main: {count}");
+                        Pause();
+                        break;
+                    case "5": PrintValues(values, count); Pause(); break;
                     case "0": running = false; ShowGoodbye(); break;
                     default: ShowUnknownChoice(); Pause(); break;
                 }
@@ -62,6 +71,8 @@ namespace Museum
             Console.WriteLine("1 — довідка про програму");
             Console.WriteLine("2 — вартість реставрації залежно від площі");
             Console.WriteLine("3 — відвідуваність розділів за тиждень");
+            Console.WriteLine("4 — додати оцінну вартість експоната");
+            Console.WriteLine("5 — показати вартості");
             Console.WriteLine("0 — вихід");
             Console.Write("Ваш вибір: ");
         }
@@ -83,7 +94,7 @@ namespace Museum
             Console.WriteLine("Немає такого пункту. Спробуйте ще раз.");
         }
 
-        static void ShowAbout()
+        static void ShowAbout(int used, int capacity)
         {
             Console.WriteLine("Тема №28: Музей.");
             Console.WriteLine("Сутність: експонат. Полів: " + fieldNames.Length + ".");
@@ -91,7 +102,7 @@ namespace Museum
             {
                 Console.WriteLine($"  {i + 1}. {fieldNames[i]} — {fieldTypes[i]}");
             }
-            Console.WriteLine($"Місткість сховища: {Capacity} записів, зайнято: {count}.");
+            Console.WriteLine($"Місткість сховища: {capacity} записів, зайнято: {used}.");
         }
 
         static void ShowCostTable()
@@ -250,6 +261,35 @@ namespace Museum
                     continue;
                 }
                 return value;
+            }
+        }
+
+        static void AddValue(double[] values, ref int count, double newValue, int capacity)
+        {
+            if (count == capacity)
+            {
+                Console.WriteLine("Місця більше немає.");
+                return;
+            }
+
+            values[count] = newValue;
+            count++;
+            Console.WriteLine($"Додано запис №{count}.");
+        }
+
+        static void PrintValues(double[] values, int count)
+        {
+            if (count == 0)
+            {
+                Console.WriteLine("Список порожній.");
+                return;
+            }
+
+            Console.WriteLine("№".PadLeft(4) + "Оцінна вартість, грн".PadLeft(24));
+            Console.WriteLine(new string('-', 28));
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine($"{i + 1,4}{values[i],24:F2}");
             }
         }
     }
