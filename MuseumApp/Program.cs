@@ -6,6 +6,8 @@ namespace Museum
     internal class Program
     {
         const int Capacity = 100;
+        const double MaterialRate = 140.0;
+        const double WorkRate = 400.0;
         const double AreaStart = 0.5;
         const double AreaEnd = 5.0;
         const double AreaStep = 0.5;
@@ -37,8 +39,8 @@ namespace Museum
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-
             bool running = true;
+
             while (running)
             {
                 ShowMenu();
@@ -47,26 +49,11 @@ namespace Museum
 
                 switch (choice)
                 {
-                    case "1":
-                        ShowAbout();
-                        Pause();
-                        break;
-                    case "2":
-                        ShowCostTable();
-                        Pause();
-                        break;
-                    case "3":
-                        ShowVisitorsTable();
-                        Pause();
-                        break;
-                    case "0":
-                        running = false;
-                        Console.WriteLine("До побачення.");
-                        break;
-                    default:
-                        Console.WriteLine("Немає такого пункту. Спробуйте ще раз.");
-                        Pause();
-                        break;
+                    case "1": ShowAbout(); Pause(); break;
+                    case "2": ShowCostTable(); Pause(); break;
+                    case "3": ShowVisitorsTable(); Pause(); break;
+                    case "0": running = false; ShowGoodbye(); break;
+                    default: ShowUnknownChoice(); Pause(); break;
                 }
             }
         }
@@ -88,6 +75,16 @@ namespace Museum
             Console.Clear();
         }
 
+        static void ShowGoodbye()
+        {
+            Console.WriteLine("До побачення.");
+        }
+
+        static void ShowUnknownChoice()
+        {
+            Console.WriteLine("Немає такого пункту. Спробуйте ще раз.");
+        }
+
         static void ShowAbout()
         {
             Console.WriteLine("Тема №28: Музей.");
@@ -101,14 +98,41 @@ namespace Museum
 
         static void ShowCostTable()
         {
+            PrintCostTable(AreaStart, AreaEnd, AreaStep);
+        }
+
+        static double CalculateMaterialsCost(double area, double rate)
+        {
+            return rate * area;
+        }
+
+        static double CalculateWorkCost(double area, double rate)
+        {
+            return rate * Math.Sqrt(area);
+        }
+
+        static void PrintCostTable(double start, double end, double step)
+        {
+            if (step <= 0)
+            {
+                Console.WriteLine("Помилка: крок має бути додатним.");
+                return;
+            }
+            if (end < start)
+            {
+                Console.WriteLine("Помилка: кінець проміжку менший за початок.");
+                return;
+            }
+
             Console.WriteLine("Вартість реставрації залежно від площі пошкодження");
-            Console.WriteLine("Площа, м²".PadLeft(10) + "Матеріали, грн".PadLeft(16) + "Робота, грн".PadLeft(14));
+            Console.WriteLine("Площа, м²".PadLeft(10) + "Матеріали, грн".PadLeft(16) +
+                              "Робота, грн".PadLeft(14));
             Console.WriteLine(new string('-', 40));
 
-            for (double area = AreaStart; area <= AreaEnd + 1e-9; area += AreaStep)
+            for (double area = start; area <= end + 1e-9; area += step)
             {
-                double materials = 140 * area;
-                double work = 400 * Math.Sqrt(area);
+                double materials = CalculateMaterialsCost(area, MaterialRate);
+                double work = CalculateWorkCost(area, WorkRate);
                 Console.WriteLine($"{area,10:F2}{materials,16:F2}{work,14:F2}");
             }
         }
