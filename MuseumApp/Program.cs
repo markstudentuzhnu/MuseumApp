@@ -8,6 +8,10 @@ namespace Museum
     {
         const int Capacity = 100;
         const decimal MaxValue = 1000000000m;
+        const int TitleLength = 24;
+        const int AuthorLength = 18;
+        const int SectionLength = 12;
+        const int ConditionLength = 12;
         const double MaterialRate = 140.0;
         const double WorkRate = 400.0;
 
@@ -57,6 +61,7 @@ namespace Museum
 
                 switch (choice)
                 {
+                    case "2": AddExhibit(); Pause(); break;
                     case "4": ShowAbout(count, Capacity); Pause(); break;
                     case "5": ShowCostTable(); Pause(); break;
                     case "6": ShowVisitorsTable(); Pause(); break;
@@ -70,6 +75,7 @@ namespace Museum
         static void ShowMenu()
         {
             Console.WriteLine("=== Музей ===");
+            Console.WriteLine("2 — додати експонат");
             Console.WriteLine("4 — довідка про програму");
             Console.WriteLine("5 — вартість реставрації залежно від площі");
             Console.WriteLine("6 — відвідуваність розділів за тиждень");
@@ -263,6 +269,106 @@ namespace Museum
                 }
                 return value;
             }
+        }
+
+        static string ReadText(string prompt, int maxLength)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string input = (Console.ReadLine() ?? "").Trim();
+
+                if (input.Length == 0)
+                {
+                    Console.WriteLine("Помилка: рядок не може бути порожнім.");
+                    continue;
+                }
+                if (input.Length > maxLength)
+                {
+                    Console.WriteLine($"Помилка: не більше {maxLength} символів.");
+                    continue;
+                }
+                return input;
+            }
+        }
+
+        static decimal ReadDecimal(string prompt, decimal min, decimal max)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string input = Console.ReadLine() ?? "";
+                decimal value;
+                bool isNumber = decimal.TryParse(input.Trim().Replace(',', '.'),
+                    NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint,
+                    CultureInfo.InvariantCulture, out value);
+
+                if (!isNumber)
+                {
+                    Console.WriteLine("Помилка: потрібне число.");
+                    continue;
+                }
+                if (value < min || value > max)
+                {
+                    Console.WriteLine($"Помилка: число має бути від {min} до {max}.");
+                    continue;
+                }
+                return value;
+            }
+        }
+
+        static bool ReadYesNo(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string answer = (Console.ReadLine() ?? "").Trim().ToLower();
+
+                if (answer == "так")
+                {
+                    return true;
+                }
+                if (answer == "ні")
+                {
+                    return false;
+                }
+                Console.WriteLine("Помилка: введіть «так» або «ні».");
+            }
+        }
+
+        static void StoreExhibit(string title, string author, int year, string section,
+            decimal value, string condition, bool isExhibited)
+        {
+            ids[count] = nextId;
+            titles[count] = title;
+            authors[count] = author;
+            years[count] = year;
+            sections[count] = section;
+            values[count] = value;
+            conditions[count] = condition;
+            exhibited[count] = isExhibited;
+            count++;
+            nextId++;
+        }
+
+        static void AddExhibit()
+        {
+            if (count == Capacity)
+            {
+                Console.WriteLine("Сховище заповнене, видаліть щось зайве.");
+                return;
+            }
+
+            string title = ReadText("Назва: ", TitleLength);
+            string author = ReadText("Автор: ", AuthorLength);
+            int year = ReadInt($"Рік створення (1–{DateTime.Today.Year}): ", 1, DateTime.Today.Year);
+            string section = ReadText("Розділ експозиції: ", SectionLength);
+            decimal value = ReadDecimal("Оцінна вартість, грн (0–1000000000): ", 0m, MaxValue);
+            string condition = ReadText("Стан (добрий, задовільний, реставрація): ", ConditionLength);
+            bool isExhibited = ReadYesNo("Виставлений зараз (так/ні): ");
+
+            StoreExhibit(title, author, year, section, value, condition, isExhibited);
+            Console.WriteLine($"Додано експонат №{ids[count - 1]}.");
         }
 
         static void IncreaseValue(int value)
