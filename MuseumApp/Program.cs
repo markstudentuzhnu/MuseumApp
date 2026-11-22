@@ -63,6 +63,7 @@ namespace Museum
                 {
                     case "1": ShowExhibits(); Pause(); break;
                     case "2": AddExhibit(); Pause(); break;
+                    case "3": FillSampleData(); Pause(); break;
                     case "4": ShowAbout(count, Capacity); Pause(); break;
                     case "5": ShowCostTable(); Pause(); break;
                     case "6": ShowVisitorsTable(); Pause(); break;
@@ -78,6 +79,7 @@ namespace Museum
             Console.WriteLine("=== Музей ===");
             Console.WriteLine("1 — показати всі експонати");
             Console.WriteLine("2 — додати експонат");
+            Console.WriteLine("3 — заповнити тестовими даними");
             Console.WriteLine("4 — довідка про програму");
             Console.WriteLine("5 — вартість реставрації залежно від площі");
             Console.WriteLine("6 — відвідуваність розділів за тиждень");
@@ -371,6 +373,45 @@ namespace Museum
 
             StoreExhibit(title, author, year, section, value, condition, isExhibited);
             Console.WriteLine($"Додано експонат №{ids[count - 1]}.");
+        }
+
+        static void FillSampleData()
+        {
+            string[] sampleTitles =
+            {
+                "Козак із бандурою", "Бронзова статуетка", "Глечик з розписом", "Гравюра «Старий Київ»",
+                "Срібна монета", "Рушник весільний", "Пейзаж з млином"
+            };
+            string[] sampleAuthors =
+            {
+                "Невідомий автор", "Остап Левицький", "Невідомий автор", "Ірина Мельник",
+                "Невідомий автор", "Невідомий автор", "Олена Гнатюк"
+            };
+            int[] sampleYears = { 1780, 1925, 1890, 1958, 1648, 1910, 1972 };
+            string[] sampleSections =
+            {
+                "Живопис", "Скульптура", "Кераміка", "Графіка", "Нумізматика", "Тканини", "Живопис"
+            };
+            decimal[] sampleValues = { 350000m, 120500.50m, 18000m, 42000m, 96000m, 27300.75m, 88000m };
+            string[] sampleConditions =
+            {
+                "добрий", "задовільний", "реставрація", "добрий", "добрий", "задовільний", "добрий"
+            };
+            bool[] sampleExhibited = { true, true, false, true, false, true, true };
+
+            int added = 0;
+            for (int i = 0; i < sampleTitles.Length; i++)
+            {
+                if (count == Capacity)
+                {
+                    Console.WriteLine("Сховище заповнене, решту записів не додано.");
+                    break;
+                }
+                StoreExhibit(sampleTitles[i], sampleAuthors[i], sampleYears[i], sampleSections[i],
+                    sampleValues[i], sampleConditions[i], sampleExhibited[i]);
+                added++;
+            }
+            Console.WriteLine($"Додано тестових експонатів: {added}. Усього: {count}.");
         }
 
         static void ShowExhibits()
