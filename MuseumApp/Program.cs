@@ -61,6 +61,7 @@ namespace Museum
 
                 switch (choice)
                 {
+                    case "1": ShowExhibits(); Pause(); break;
                     case "2": AddExhibit(); Pause(); break;
                     case "4": ShowAbout(count, Capacity); Pause(); break;
                     case "5": ShowCostTable(); Pause(); break;
@@ -75,6 +76,7 @@ namespace Museum
         static void ShowMenu()
         {
             Console.WriteLine("=== Музей ===");
+            Console.WriteLine("1 — показати всі експонати");
             Console.WriteLine("2 — додати експонат");
             Console.WriteLine("4 — довідка про програму");
             Console.WriteLine("5 — вартість реставрації залежно від площі");
@@ -369,6 +371,48 @@ namespace Museum
 
             StoreExhibit(title, author, year, section, value, condition, isExhibited);
             Console.WriteLine($"Додано експонат №{ids[count - 1]}.");
+        }
+
+        static void ShowExhibits()
+        {
+            if (count == 0)
+            {
+                Console.WriteLine("Експонатів поки немає.");
+                return;
+            }
+
+            Console.WriteLine($"{"№",4}  {"Назва",-26}{"Автор",-20}{"Рік",6}  {"Розділ",-14}" +
+                              $"{"Вартість, грн",15}  {"Стан",-14}{"Виставл.",9}");
+            Console.WriteLine(new string('-', 114));
+            for (int i = 0; i < count; i++)
+            {
+                string mark = exhibited[i] ? "так" : "ні";
+                Console.WriteLine($"{ids[i],4}  {titles[i],-26}{authors[i],-20}{years[i],6}  " +
+                                  $"{sections[i],-14}{values[i],15:F2}  {conditions[i],-14}{mark,9}");
+            }
+
+            Console.WriteLine($"\nЕкспонатів: {count}.");
+            Console.WriteLine($"Загальна оцінна вартість: {CalculateTotalValue(values, count):F2} грн");
+            Console.WriteLine($"Середня оцінна вартість: {CalculateAverageValue(values, count):F2} грн");
+        }
+
+        static decimal CalculateTotalValue(decimal[] valueArray, int used)
+        {
+            decimal sum = 0;
+            for (int i = 0; i < used; i++)
+            {
+                sum += valueArray[i];
+            }
+            return sum;
+        }
+
+        static decimal CalculateAverageValue(decimal[] valueArray, int used)
+        {
+            if (used == 0)
+            {
+                return 0;
+            }
+            return CalculateTotalValue(valueArray, used) / used;
         }
 
         static void IncreaseValue(int value)
