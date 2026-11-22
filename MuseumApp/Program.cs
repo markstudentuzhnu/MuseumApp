@@ -7,8 +7,7 @@ namespace Museum
     internal class Program
     {
         const int Capacity = 100;
-        const double MaxValue = 1000000000.0;
-        const string ValuePrompt = "Оцінна вартість, грн (0–1000000000): ";
+        const decimal MaxValue = 1000000000m;
         const double MaterialRate = 140.0;
         const double WorkRate = 400.0;
 
@@ -48,8 +47,6 @@ namespace Museum
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-            double[] values = new double[Capacity];
-            int count = 0;
             bool running = true;
 
             while (running)
@@ -60,23 +57,10 @@ namespace Museum
 
                 switch (choice)
                 {
-                    case "1": ShowAbout(count, Capacity); Pause(); break;
-                    case "2": ShowCostTable(); Pause(); break;
-                    case "3": ShowVisitorsTable(); Pause(); break;
-                    case "4":
-                        double newValue = ReadDouble(ValuePrompt, 0, MaxValue);
-                        AddValue(values, ref count, newValue, Capacity);
-                        Console.WriteLine($"Лічильник у Main: {count}");
-                        Pause();
-                        break;
-                    case "5": PrintValues(values, count); Pause(); break;
-                    case "6": ShowStatistics(values, count); Pause(); break;
+                    case "4": ShowAbout(count, Capacity); Pause(); break;
+                    case "5": ShowCostTable(); Pause(); break;
+                    case "6": ShowVisitorsTable(); Pause(); break;
                     case "7": ShowPassingDemo(); Pause(); break;
-                    case "8":
-                        int number = ReadInt("Номер запису для видалення: ", 1, Capacity);
-                        RemoveAt(values, ref count, number - 1);
-                        Pause();
-                        break;
                     case "0": running = false; ShowGoodbye(); break;
                     default: ShowUnknownChoice(); Pause(); break;
                 }
@@ -86,14 +70,10 @@ namespace Museum
         static void ShowMenu()
         {
             Console.WriteLine("=== Музей ===");
-            Console.WriteLine("1 — довідка про програму");
-            Console.WriteLine("2 — вартість реставрації залежно від площі");
-            Console.WriteLine("3 — відвідуваність розділів за тиждень");
-            Console.WriteLine("4 — додати оцінну вартість експоната");
-            Console.WriteLine("5 — показати вартості");
-            Console.WriteLine("6 — статистика вартостей");
+            Console.WriteLine("4 — довідка про програму");
+            Console.WriteLine("5 — вартість реставрації залежно від площі");
+            Console.WriteLine("6 — відвідуваність розділів за тиждень");
             Console.WriteLine("7 — дослід: значиме й посилальне");
-            Console.WriteLine("8 — видалити запис за номером");
             Console.WriteLine("0 — вихід");
             Console.Write("Ваш вибір: ");
         }
@@ -285,87 +265,6 @@ namespace Museum
             }
         }
 
-        static void AddValue(double[] values, ref int count, double newValue, int capacity)
-        {
-            if (count == capacity)
-            {
-                Console.WriteLine("Місця більше немає.");
-                return;
-            }
-
-            values[count] = newValue;
-            count++;
-            Console.WriteLine($"Додано запис №{count}.");
-        }
-
-        static void PrintValues(double[] values, int count)
-        {
-            if (count == 0)
-            {
-                Console.WriteLine("Список порожній.");
-                return;
-            }
-
-            Console.WriteLine("№".PadLeft(4) + "Оцінна вартість, грн".PadLeft(24));
-            Console.WriteLine(new string('-', 28));
-            for (int i = 0; i < count; i++)
-            {
-                Console.WriteLine($"{i + 1,4}{values[i],24:F2}");
-            }
-        }
-
-        static void FindMax(double[] values, int count, out double max, out int index)
-        {
-            max = 0;
-            index = -1;
-            if (count == 0)
-            {
-                return;
-            }
-
-            max = values[0];
-            index = 0;
-            for (int i = 1; i < count; i++)
-            {
-                if (values[i] > max)
-                {
-                    max = values[i];
-                    index = i;
-                }
-            }
-        }
-
-        static void Statistics(double[] values, int count, out double sum, out double average)
-        {
-            sum = 0;
-            for (int i = 0; i < count; i++)
-            {
-                sum += values[i];
-            }
-            average = count > 0 ? sum / count : 0;
-        }
-
-        static void ShowStatistics(double[] values, int count)
-        {
-            if (count == 0)
-            {
-                Console.WriteLine("Статистика недоступна: список порожній.");
-                return;
-            }
-
-            double sum;
-            double average;
-            double max;
-            int maxIndex;
-            Statistics(values, count, out sum, out average);
-            FindMax(values, count, out max, out maxIndex);
-
-            Console.WriteLine($"Записів: {count}");
-            Console.WriteLine($"Сума: {sum:F2} грн");
-            Console.WriteLine($"Середня: {average:F2} грн");
-            Console.WriteLine($"Найбільша: {max:F2} грн (номер {maxIndex + 1})");
-        }
-
         static void IncreaseValue(int value)
         {
             value = value + 100;
@@ -415,21 +314,5 @@ namespace Museum
             Console.WriteLine($"  у Main: price = {price}");
         }
 
-        static void RemoveAt(double[] values, ref int count, int index)
-        {
-            if (index < 0 || index >= count)
-            {
-                Console.WriteLine($"Запису з номером {index + 1} немає. Записів: {count}.");
-                return;
-            }
-
-            for (int i = index; i < count - 1; i++)
-            {
-                values[i] = values[i + 1];
-            }
-            count--;
-            values[count] = 0;
-            Console.WriteLine("Запис видалено.");
-        }
     }
 }
