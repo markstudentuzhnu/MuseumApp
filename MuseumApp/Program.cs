@@ -12,6 +12,17 @@ namespace Museum
         const double MaterialRate = 140.0;
         const double WorkRate = 400.0;
 
+        static int[] ids = new int[Capacity];
+        static string[] titles = new string[Capacity];
+        static string[] authors = new string[Capacity];
+        static int[] years = new int[Capacity];
+        static string[] sections = new string[Capacity];
+        static decimal[] values = new decimal[Capacity];
+        static string[] conditions = new string[Capacity];
+        static bool[] exhibited = new bool[Capacity];
+        static int count = 0;
+        static int nextId = 1;
+
         static string[] fieldNames =
         {
             "Інвентарний номер", "Назва", "Автор", "Рік створення",
